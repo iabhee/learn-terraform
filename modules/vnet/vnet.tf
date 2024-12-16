@@ -10,13 +10,13 @@ data "http" "public_ip" {
 }
 
 resource "azurerm_network_security_group" "nsg" {
-  for_each = { for nsg in var.network_secruity_group : nsg.name => nsg}
+  for_each = { for nsg in var.network_security_group : nsg.id => nsg}
 
-  name                = each.value.name
+  name                = each.value.id
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
-
+  depends_on = [ azurerm_resource_group.resource_group_name ]
   dynamic "security_rule" {
     for_each = each.value.security_rules
     content {

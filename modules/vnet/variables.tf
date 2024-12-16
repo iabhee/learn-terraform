@@ -27,7 +27,9 @@ variable "subnets" {
   type = map(object({
     name = string
     address_prefixes = list(string)
-    network_secruity_group = optional(string)
+    network_security_group = object({ 
+      id = string
+    })
     route_table = optional(object({id = string}))
     service_endpoints = optional(list(string))
     delegations = optional(list(object({
@@ -43,9 +45,9 @@ variable "subnets" {
   default = {}
 }
 
-variable "network_secruity_group" {
-  type = list(object({
-    name = string
+variable "network_security_group" {
+  type = map(object({
+    id = string
     security_rules = list(object({
       name = string
       access = string
@@ -58,6 +60,6 @@ variable "network_secruity_group" {
       source_port_range = string
     }))
   }))
-  default = []
+  default = {}
   description = "List of Network Security Groups with security rules"
 }

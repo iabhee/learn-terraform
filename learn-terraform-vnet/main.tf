@@ -5,6 +5,12 @@ module "regions" {
 data "http" "public_ip" {
   url = "https://api.ipify.org?format=json"
 }
+
+data "azurerm_network_security_group" "nsg" {
+  name = "${local.name}-nsg"
+  resource_group_name = "${local.name}-rsg"
+}
+
 module "learn-terraform-vnet" {
   source              = "../modules/vnet"
   resource_group_name = "${local.name}-rsg"
@@ -15,11 +21,29 @@ module "learn-terraform-vnet" {
     "Environment" = "Terraform Getting Started"
     "Team"        = "DevOps"
   }
+  network_security_group = {
+    nsg1 = {
+      id = "${local.name}-nsg"
+      security_rules = [
+        {
+          name                       = "AllowInboundHTTPS"
+          priority                   = 100
+          direction                  = "Inbound"
+          access                     = "Allow"
+          protocol                   = "Tcp"
+          source_port_range          = "*"
+          destination_port_range     = "443"
+          source_address_prefix      = jsondecode(data.http.public_ip.response_body).ip
+          destination_address_prefix = "*"
+        }
+      ]  
+    }        
+  }
   subnets = {
     apps = {
       name = "${local.name}-sn"
       address_prefixes = ["10.0.0.0/24"]
-      network_secruity_group = null
+      network_security_group = { id = data.azurerm_network_security_group.nsg.id }
       route_table = null
       delegations = null
       private_endpoint_network_policies = "Disabled"
@@ -27,24 +51,5 @@ module "learn-terraform-vnet" {
       service_endpoints = null
     }
   }
-  network_secruity_group = [
-    {
-    name = "${local.name}-nsg"
-    security_rules = [
-      {
-        name                       = "AllowInboundHTTPS"
-        priority                   = 100
-        direction                  = "Inbound"
-        access                     = "Allow"
-        protocol                   = "Tcp"
-        source_port_range          = "*"
-        destination_port_range     = "443"
-        source_address_prefix      = jsondecode(data.http.public_ip.response_body).ip
-        destination_address_prefix = "*"
-      }
-    ]  
-    }
-  
-  ]
 }
 
