@@ -36,6 +36,11 @@ jobs:
         run: terraform plan
         working-directory: ${{ env.CONFIG_DIRECTORY }}
 
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+        working-directory: ${{ env.CONFIG_DIRECTORY }}
+
       - name: Update PR
         uses: actions/github-script@v6
         id: plan-comment
