@@ -63,3 +63,15 @@ variable "network_security_group" {
   default = {}
   description = "List of Network Security Groups with security rules"
 }
+
+variable "route_table" {  
+  type = map(object({
+    route = list(object({
+      name = string
+      address_prefix = string
+      next_hop_type = string
+      next_hop_in_ip_address = optional(string)
+    }))
+  }))
+  description = "A map of route tables with routes."
+}
