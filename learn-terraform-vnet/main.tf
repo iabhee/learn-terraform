@@ -39,7 +39,7 @@ module "learn-terraform-vnet" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "*"
-          source_address_prefix      = "10.0.0.0/16"  #Internal VNet range
+          source_address_prefix      = "10.0.0.0/16" #Internal VNet range
           destination_address_prefix = "*"
         },
         {
@@ -52,8 +52,8 @@ module "learn-terraform-vnet" {
           destination_port_range     = "*"
           source_address_prefix      = "*"
           destination_address_prefix = "*"
-        }   
-      ]  
+        }
+      ]
     }
     nsg-backend = {
       id = "${local.name}-nsg-backend"
@@ -77,7 +77,7 @@ module "learn-terraform-vnet" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "*"
-          source_address_prefix      = "10.0.0.0/16"  #Internal VNet range
+          source_address_prefix      = "10.0.0.0/16" #Internal VNet range
           destination_address_prefix = "*"
         },
         {
@@ -90,8 +90,8 @@ module "learn-terraform-vnet" {
           destination_port_range     = "*"
           source_address_prefix      = "*"
           destination_address_prefix = "*"
-        }   
-      ]  
+        }
+      ]
     }
     nsg-database = {
       id = "${local.name}-nsg-database"
@@ -103,7 +103,7 @@ module "learn-terraform-vnet" {
           access                     = "Allow"
           protocol                   = "Tcp"
           source_port_range          = "*"
-          destination_port_range     = "1433" #SQL database port (any database)
+          destination_port_range     = "1433"        #SQL database port (any database)
           source_address_prefix      = "10.0.2.0/24" #Backend subnet IP range
           destination_address_prefix = "*"
         },
@@ -115,7 +115,7 @@ module "learn-terraform-vnet" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "*"
-          source_address_prefix      = "10.0.0.0/16"  #Internal VNet range
+          source_address_prefix      = "10.0.0.0/16" #Internal VNet range
           destination_address_prefix = "*"
         },
         {
@@ -128,8 +128,8 @@ module "learn-terraform-vnet" {
           destination_port_range     = "*"
           source_address_prefix      = "*"
           destination_address_prefix = "*"
-        }               
-      ]  
+        }
+      ]
     }
     nsg-dmz = {
       id = "${local.name}-nsg-dmz"
@@ -153,7 +153,7 @@ module "learn-terraform-vnet" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "*"
-          source_address_prefix      = "10.0.0.0/16"  #Internal VNet range
+          source_address_prefix      = "10.0.0.0/16" #Internal VNet range
           destination_address_prefix = "*"
         },
         {
@@ -166,32 +166,32 @@ module "learn-terraform-vnet" {
           destination_port_range     = "*"
           source_address_prefix      = "*"
           destination_address_prefix = "*"
-        }   
-      ]  
-    }                          
+        }
+      ]
+    }
   }
   route_table = {
     route_table_frontend = {
-      name = "frontend-route-table"
-      location = local.location
+      name                = "frontend-route-table"
+      location            = local.location
       resource_group_name = "${local.name}-rsg"
       route = [
         {
-          name = "internet-route"
+          name           = "internet-route"
           address_prefix = "0.0.0.0/0"
-          next_hop_type = "Internet"
+          next_hop_type  = "Internet"
         },
         {
-          name = "backend-route"
-          address_prefix = "10.0.1.0/24"  
-          next_hop_type = "VirtualAppliance"
+          name                   = "backend-route"
+          address_prefix         = "10.0.1.0/24"
+          next_hop_type          = "VirtualAppliance"
           next_hop_in_ip_address = "10.0.0.0" #backend IP
         }
       ]
     }
     route_table_backend = {
-      name = "backend-route-table"
-      location = local.location
+      name                = "backend-route-table"
+      location            = local.location
       resource_group_name = "${local.name}-rsg"
       route = [
         {
@@ -201,15 +201,15 @@ module "learn-terraform-vnet" {
           next_hop_in_ip_address = "10.0.0.0" # frontend IP
         },
         {
-          name                   = "internet-route"
-          address_prefix         = "0.0.0.0/0"
-          next_hop_type          = "Internet"
+          name           = "internet-route"
+          address_prefix = "0.0.0.0/0"
+          next_hop_type  = "Internet"
         }
       ]
     }
     route_table_database = {
-      name = "database-route-table"
-      location = local.location
+      name                = "database-route-table"
+      location            = local.location
       resource_group_name = "${local.name}-rsg"
       route = [
         {
@@ -219,54 +219,54 @@ module "learn-terraform-vnet" {
           next_hop_in_ip_address = "10.0.0.0" # backend IP
         },
         {
-          name                   = "internet-route"
-          address_prefix         = "0.0.0.0/0"
-          next_hop_type          = "Internet"
+          name           = "internet-route"
+          address_prefix = "0.0.0.0/0"
+          next_hop_type  = "Internet"
         }
       ]
-    }        
+    }
   }
   subnets = {
     apps-frontend = {
-      name = "${local.name}-apps-frontend-sn"
-      address_prefixes = ["10.0.1.0/24"]
-      network_security_group = { id = module.learn-terraform-vnet.network_security_groups["nsg-frontend"] }
-      route_table = { id = module.learn-terraform-vnet.route_table["route_table_frontend" ]}
-      delegations = null
-      private_endpoint_network_policies = "Disabled"
+      name                                          = "${local.name}-apps-frontend-sn"
+      address_prefixes                              = ["10.0.1.0/24"]
+      network_security_group                        = { id = module.learn-terraform-vnet.network_security_groups["nsg-frontend"] }
+      route_table                                   = { id = module.learn-terraform-vnet.route_table["route_table_frontend"] }
+      delegations                                   = null
+      private_endpoint_network_policies             = "Disabled"
       private_link_service_network_policies_enabled = "false"
-      service_endpoints = null
+      service_endpoints                             = null
     }
     apps-backend = {
-      name = "${local.name}-apps-backend-sn"
-      address_prefixes = ["10.0.2.0/24"]
-      network_security_group = { id = module.learn-terraform-vnet.network_security_groups["nsg-backend"] }
-      route_table = null
-      delegations = null
-      private_endpoint_network_policies = "Disabled"
+      name                                          = "${local.name}-apps-backend-sn"
+      address_prefixes                              = ["10.0.2.0/24"]
+      network_security_group                        = { id = module.learn-terraform-vnet.network_security_groups["nsg-backend"] }
+      route_table                                   = { id = module.learn-terraform-vnet.route_table["route_table_backend"] }
+      delegations                                   = null
+      private_endpoint_network_policies             = "Disabled"
       private_link_service_network_policies_enabled = "false"
-      service_endpoints = null
+      service_endpoints                             = null
     }
     apps-database = {
-      name = "${local.name}-apps-database-sn"
-      address_prefixes = ["10.0.3.0/24"]
-      network_security_group = { id = module.learn-terraform-vnet.network_security_groups["nsg-database"] }
-      route_table = null
-      delegations = null
-      private_endpoint_network_policies = "Disabled"
+      name                                          = "${local.name}-apps-database-sn"
+      address_prefixes                              = ["10.0.3.0/24"]
+      network_security_group                        = { id = module.learn-terraform-vnet.network_security_groups["nsg-database"] }
+      route_table                                   = { id = module.learn-terraform-vnet.route_table["route_table_database"] }
+      delegations                                   = null
+      private_endpoint_network_policies             = "Disabled"
       private_link_service_network_policies_enabled = "false"
-      service_endpoints = null
+      service_endpoints                             = null
     }
     apps-dmz = {
-      name = "${local.name}-apps-dmz-sn"
-      address_prefixes = ["10.0.4.0/24"]
-      network_security_group = { id = module.learn-terraform-vnet.network_security_groups["nsg-dmz"] }
-      route_table = null
-      delegations = null
-      private_endpoint_network_policies = "Disabled"
+      name                                          = "${local.name}-apps-dmz-sn"
+      address_prefixes                              = ["10.0.4.0/24"]
+      network_security_group                        = { id = module.learn-terraform-vnet.network_security_groups["nsg-dmz"] }
+      route_table                                   = null
+      delegations                                   = null
+      private_endpoint_network_policies             = "Disabled"
       private_link_service_network_policies_enabled = "false"
-      service_endpoints = null
-    }            
+      service_endpoints                             = null
+    }
   }
 }
 

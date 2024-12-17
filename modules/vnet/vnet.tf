@@ -14,12 +14,12 @@ output "resource_group_name" {
 resource "azurerm_network_security_group" "nsg" {
   # for_each = { for nsg in var.network_security_group : nsg.id => nsg}
   for_each = var.network_security_group
-  name = each.key
+  name     = each.key
   # name                = each.value.id
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
-  depends_on = [ azurerm_resource_group.resource_group_name ]
+  depends_on          = [azurerm_resource_group.resource_group_name]
   dynamic "security_rule" {
     for_each = each.value.security_rules
     content {
@@ -32,9 +32,9 @@ resource "azurerm_network_security_group" "nsg" {
       destination_port_range     = security_rule.value.destination_port_range
       source_address_prefix      = security_rule.value.source_address_prefix
       destination_address_prefix = security_rule.value.destination_address_prefix
-    }    
+    }
   }
-  
+
 }
 
 output "network_security_groups" {
@@ -43,16 +43,16 @@ output "network_security_groups" {
 
 resource "azurerm_route_table" "route_table" {
   location            = azurerm_resource_group.resource_group_name.location
-  for_each =           var.route_table
-  name = each.key
+  for_each            = var.route_table
+  name                = each.key
   resource_group_name = azurerm_resource_group.resource_group_name.name
-  dynamic route {
-    for_each =  each.value.route
+  dynamic "route" {
+    for_each = each.value.route
     content {
-      name = route.value.name
-      address_prefix = route.value.address_prefix
-      next_hop_type = route.value.next_hop_type
-      next_hop_in_ip_address = route.value.next_hop_in_ip_address      
+      name                   = route.value.name
+      address_prefix         = route.value.address_prefix
+      next_hop_type          = route.value.next_hop_type
+      next_hop_in_ip_address = route.value.next_hop_in_ip_address
     }
   }
 }
@@ -69,11 +69,11 @@ module "vnet" {
   address_space       = var.vnet_address_spaces
   enable_telemetry    = false
   tags                = azurerm_resource_group.resource_group_name.tags
-  subnets = length(var.subnets) > 0 ? var.subnets : null
-  depends_on = [ 
+  subnets             = length(var.subnets) > 0 ? var.subnets : null
+  depends_on = [
     azurerm_network_security_group.nsg,
     azurerm_resource_group.resource_group_name
-  ]  
+  ]
 }
 
 
