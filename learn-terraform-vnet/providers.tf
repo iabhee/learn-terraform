@@ -18,6 +18,7 @@ terraform {
     organization = "ra-devops-org"
     workspaces {
       name = "learn-terraform-azure"
+      tags = ["learn-terraform"]
     }
   }
 }
