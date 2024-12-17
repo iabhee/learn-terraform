@@ -1,15 +1,13 @@
 name: 'Terraform plan'
 
 on:
-    # pull_request:
-    # workflow_dispatch:
-    push:
-      branches: [ "test-pr" ]
+    pull_request:
+    workflow_dispatch:
 env:
     TF_CLOUD_ORGANIZATION: "${{ secrets.TF_CLOUD_ORGANIZATION }}"
     TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-    TF_WORKSPACE: $TF_WORKSPACE
-    CONFIG_DIRECTORY: "../learn-terraform-vnet/"
+    TF_WORKSPACE: "learn-terraform-azure"
+    CONFIG_DIRECTORY: "./learn-terraform-vnet/"
 
 jobs:
     terraform:
