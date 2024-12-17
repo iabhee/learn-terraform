@@ -91,6 +91,7 @@ name: "Terraform Plan"
 
 on:
   pull_request:
+  workflow_dispatch:
 
 env:
   TF_CLOUD_ORGANIZATION: "${{ secrets.TF_CLOUD_ORGANIZATION }}"
