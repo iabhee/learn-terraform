@@ -121,7 +121,7 @@ jobs:
           
       - name: Check Terraform Configuration Files
         run: |
-            ls -la ./
+            ls -la ./learn-terraform-vnet
             
       - name: Create Plan Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
