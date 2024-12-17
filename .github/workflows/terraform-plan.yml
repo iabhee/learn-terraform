@@ -29,10 +29,13 @@ jobs:
       - name: Terraform init
         id: init
         run: terraform init
+        working-directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Terraform Plan
         id: plan
         run: terraform plan
+        working-directory: ${{ env.CONFIG_DIRECTORY }}
+
     #   - name: Upload Configuration
     #     uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
     #     id: plan-upload
