@@ -36,7 +36,7 @@ jobs:
           uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
           id: plan-run
           with:
-              workspace: ${{ env.TF_WORKSPACE }}
+              workspace: learn-terraform
               configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
               plan_only: true      
         - name: Get Plan Output
