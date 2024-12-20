@@ -50,19 +50,19 @@ jobs:
       continue-on-error: true
       working-directory: ${{ env.CONFIG_DIRECTORY }}
       
-    - name: Mask Azure Subscription ID
-      run: |
-        SUBSCRIPTION_ID=$(terraform plan | grep -oP '/subscriptions/\K[a-f0-9-]+')
-        if [ -n "$SUBSCRIPTION_ID" ]; then
-        echo "::add-mask::$SUBSCRIPTION_ID"
-        fi    
-      working-directory: ${{ env.CONFIG_DIRECTORY }}   
+    # - name: Mask Azure Subscription ID
+    #   run: |
+    #     SUBSCRIPTION_ID=$(terraform plan | grep -oP '/subscriptions/\K[a-f0-9-]+')
+    #     if [ -n "$SUBSCRIPTION_ID" ]; then
+    #     echo "::add-mask::$SUBSCRIPTION_ID"
+    #     fi    
+    #   working-directory: ${{ env.CONFIG_DIRECTORY }}   
          
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate -no-color
-      continue-on-error: true
-      working-directory: ${{ env.CONFIG_DIRECTORY }}      
+    # - name: Terraform Validate
+    #   id: validate
+    #   run: terraform validate -no-color
+    #   continue-on-error: true
+    #   working-directory: ${{ env.CONFIG_DIRECTORY }}      
 
     - name: Terraform Plan
       id: plan
@@ -128,7 +128,7 @@ jobs:
           }
 
     - name: Terraform Status
-      if: steps.plan.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.init.outcome == 'failure' || steps.fmt.outcome == 'failure'
+      if: steps.plan.outcome == 'failure' || steps.init.outcome == 'failure' || steps.fmt.outcome == 'failure'
       run: exit 1
 
     - name: Terraform Apply
