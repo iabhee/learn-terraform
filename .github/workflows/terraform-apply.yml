@@ -31,6 +31,13 @@ jobs:
         run: terraform init
         working-directory: ${{ env.CONFIG_DIRECTORY }}
 
+      - name: Mask Azure Subscription ID
+        run: |
+          SUBSCRIPTION_ID=$(terraform plan | grep -oP '/subscriptions/\K[a-f0-9-]+')
+          if [ -n "$SUBSCRIPTION_ID" ]; then
+          echo "::add-mask::$SUBSCRIPTION_ID"
+          fi    
+              
       - name: Terraform Plan
         id: plan
         run: terraform plan
@@ -42,6 +49,7 @@ jobs:
         working-directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Merge pull request')    
         run: terraform apply -auto-approve
         working-directory: ${{ env.CONFIG_DIRECTORY }}
 

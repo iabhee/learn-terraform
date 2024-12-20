@@ -26,11 +26,28 @@ jobs:
         with:
             cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -write
+        continue-on-error: true
+
       - name: Terraform init
         id: init
         run: terraform init
         working-directory: ${{ env.CONFIG_DIRECTORY }}
-
+        
+      - name: Mask Azure Subscription ID
+        run: |
+          SUBSCRIPTION_ID=$(terraform plan | grep -oP '/subscriptions/\K[a-f0-9-]+')
+          if [ -n "$SUBSCRIPTION_ID" ]; then
+          echo "::add-mask::$SUBSCRIPTION_ID"
+          fi    
+          
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        continue-on-error: true
+          
       - name: Terraform Plan
         id: plan
         run: terraform plan
