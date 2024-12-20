@@ -50,13 +50,13 @@ jobs:
       continue-on-error: true
       working-directory: ${{ env.CONFIG_DIRECTORY }}
       
-    - name: Mask Azure Subscription ID
-      run: |
-        SUBSCRIPTION_ID=$(terraform plan | grep -oP '/subscriptions/\K[a-f0-9-]+')
-        if [ -n "$SUBSCRIPTION_ID" ]; then
-        echo "::add-mask::$SUBSCRIPTION_ID"
-        fi    
-      working-directory: ${{ env.CONFIG_DIRECTORY }}   
+    # - name: Mask Azure Subscription ID
+    #   run: |
+    #     SUBSCRIPTION_ID=$(terraform plan | grep -oP '/subscriptions/\K[a-f0-9-]+')
+    #     if [ -n "$SUBSCRIPTION_ID" ]; then
+    #     echo "::add-mask::$SUBSCRIPTION_ID"
+    #     fi    
+    #   working-directory: ${{ env.CONFIG_DIRECTORY }}   
          
     - name: Terraform Validate
       id: validate
